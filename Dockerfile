@@ -9,12 +9,13 @@ RUN git clone https://github.com/composerize/composerize.git && \
 FROM node AS build
 
 WORKDIR /composerize
-COPY --from=base /git/composerize/packages/composerize-website .
-RUN yarn && \
+COPY --from=base /git/composerize .
+RUN cd packages/composerize-website && \
+    yarn && \
     export NODE_ENV=production && \
     yarn build
 
 FROM pierrezemb/gostatic
 
-COPY --from=build /composerize/build /srv/http
+COPY --from=build /composerize/packages/composerize-website/build /srv/http
 EXPOSE 8043
